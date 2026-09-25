@@ -1,0 +1,65 @@
+[
+  {
+    "id": "match_1",
+    "title": "Ethiopia vs Kenya - Friendly Live",
+    "league": "International Friendly",
+    "status": "LIVE",
+    "time": "LIVE NOW",
+    "teamA": {"name": "Ethiopia", "logo": "https://flagcdn.com/w80/et.png"},
+    "teamB": {"name": "Kenya", "logo": "https://flagcdn.com/w80/ke.png"},
+    "thumbnail": "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600",
+    "category": "football",
+    "providers": [
+      {
+        "name": "Server 1 - HD",
+        "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+        "type": "hls",
+        "headers": {}
+      },
+      {
+        "name": "Server 2 - Backup",
+        "url": "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8",
+        "type": "hls",
+        "headers": {}
+      }
+    ]
+  },
+  {
+    "id": "match_2",
+    "title": "Arsenal vs Man City - Premier League",
+    "league": "Premier League",
+    "status": "LIVE",
+    "time": "19:30",
+    "teamA": {"name": "Arsenal", "logo": "https://a3.espncdn.com/combiner/i?img=%2Fi%2Fteamlogos%2Fsoccer%2F500%2F359.png"},
+    "teamB": {"name": "Man City", "logo": "https://a3.espncdn.com/combiner/i?img=%2Fi%2Fteamlogos%2Fsoccer%2F500%2F382.png"},
+    "thumbnail": "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600",
+    "category": "football",
+    "providers": [
+      {
+        "name": "Server 1 - HD",
+        "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+        "type": "hls",
+        "headers": {}
+      }
+    ]
+  },
+  {
+    "id": "match_3",
+    "title": "India vs Australia - Cricket World Cup",
+    "league": "ICC World Cup",
+    "status": "UPCOMING",
+    "time": "Tomorrow 14:00",
+    "teamA": {"name": "India", "logo": "https://flagcdn.com/w80/in.png"},
+    "teamB": {"name": "Australia", "logo": "https://flagcdn.com/w80/au.png"},
+    "thumbnail": "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=600",
+    "category": "cricket",
+    "providers": [
+      {
+        "name": "Server 1",
+        "url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+        "type": "hls",
+        "headers": {}
+      }
+    ]
+  }
+]
