@@ -1,0 +1,34 @@
+[
+  {
+    "id": "football",
+    "title": "Football Live",
+    "image": "https://cdn-icons-png.flaticon.com/512/33/33736.png",
+    "catLink": "manual",
+    "type": "manual",
+    "description": "Live Football Matches"
+  },
+  {
+    "id": "cricket",
+    "title": "Cricket Live",
+    "image": "https://cdn-icons-png.flaticon.com/512/10/10526.png",
+    "catLink": "manual",
+    "type": "manual",
+    "description": "Live Cricket"
+  },
+  {
+    "id": "entertainment",
+    "title": "Entertainment",
+    "image": "https://cdn-icons-png.flaticon.com/512/3163/3163478.png",
+    "catLink": "manual",
+    "type": "manual",
+    "description": "Movies & Shows"
+  },
+  {
+    "id": "auto_demo",
+    "title": "Auto Provider (Demo M3U)",
+    "image": "https://cdn-icons-png.flaticon.com/512/138/138817.png",
+    "catLink": "https://iptv-org.github.io/iptv/index.m3u",
+    "type": "auto_m3u",
+    "description": "Demo: fetches public IPTV list to show auto mode works"
+  }
+]

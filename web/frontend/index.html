@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cricfy TV - Web Clone | Live Football & Cricket</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script>
+tailwind.config = { theme: { extend: { colors: { cricfy: { bg: '#0a0a0a', card: '#1a1a1a', red: '#e50914', gray: '#2a2a2a' } } } } }
+</script>
+<style>
+body { background:#0a0a0a; color:white; font-family: 'Inter', sans-serif; }
+.scrollbar-hide::-webkit-scrollbar { display:none; }
+.scrollbar-hide { -ms-overflow-style:none; scrollbar-width:none; }
+.live-dot { animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.card-hover:hover { transform: scale(1.03); }
+</style>
+</head>
+<body class="bg-[#0a0a0a] min-h-screen">
+<header class="sticky top-0 z-50 bg-black/95 backdrop-blur border-b border-[#222] px-4 py-3 flex items-center justify-between">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 bg-[#e50914] rounded-lg flex items-center justify-center font-black text-white">C</div>
+    <h1 class="text-xl font-black tracking-tight">CRICFY <span class="text-[#e50914]">TV</span> <span class="text-[10px] bg-[#222] px-2 py-1 rounded ml-2 font-normal">WEB CLONE</span></h1>
+  </div>
+  <div class="flex items-center gap-3">
+    <div class="relative hidden md:block">
+      <input id="searchInput" placeholder="Search matches..." class="bg-[#1a1a1a] border border-[#333] rounded-full px-4 py-2 pl-10 text-sm w-64 focus:outline-none focus:border-[#e50914]">
+      <i class="fas fa-search absolute left-3 top-3 text-gray-500 text-sm"></i>
+    </div>
+    <button onclick="openAdmin()" class="bg-[#1a1a1a] hover:bg-[#2a2a2a] px-4 py-2 rounded-full text-sm border border-[#333]"><i class="fas fa-plus mr-2"></i>Add Live</button>
+    <a href="/api/docs" target="_blank" class="bg-[#e50914] px-4 py-2 rounded-full text-sm font-bold">API</a>
+  </div>
+</header>
+
+<div id="loadingStatus" class="px-4 py-2 text-xs bg-[#111] border-b border-[#222] text-gray-400">Loading system... Please use Port 8000 preview (Cricfy Web - Hybrid Live)</div>
+
+<div class="px-4 py-4 border-b border-[#1a1a1a] overflow-x-auto scrollbar-hide">
+  <div class="flex gap-3" id="categoryTabs">
+    <button data-cat="all" class="cat-btn active bg-white text-black px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap">All</button>
+    <button data-cat="football" class="cat-btn bg-[#1a1a1a] border border-[#333] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#2a2a2a]"><i class="fas fa-futbol mr-2"></i>Football</button>
+    <button data-cat="cricket" class="cat-btn bg-[#1a1a1a] border border-[#333] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#2a2a2a]"><i class="fas fa-baseball-bat-ball mr-2"></i>Cricket</button>
+    <button data-cat="entertainment" class="cat-btn bg-[#1a1a1a] border border-[#333] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#2a2a2a]"><i class="fas fa-tv mr-2"></i>Live TV</button>
+    <button data-cat="auto" class="cat-btn bg-[#1a1a1a] border border-[#333] px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#2a2a2a]"><i class="fas fa-satellite-dish mr-2"></i>Auto Providers</button>
+  </div>
+</div>
+
+<div class="px-4 py-6">
+  <div class="flex items-center gap-3 mb-4">
+    <div class="flex items-center gap-2 bg-[#e50914] px-3 py-1 rounded-full text-xs font-black"><div class="w-2 h-2 bg-white rounded-full live-dot"></div>LIVE NOW</div>
+    <h2 class="font-bold text-lg">Football Live Events</h2>
+    <span class="text-xs text-gray-500 ml-auto" id="liveCount">0 matches</span>
+  </div>
+  <div id="matchesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="col-span-3 text-center py-10 text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i>Loading matches...</div>
+  </div>
+</div>
+
+<div class="px-4 py-6 border-t border-[#1a1a1a]">
+  <h2 class="font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-list"></i>Providers / Channels</h2>
+  <div id="providersGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+</div>
+
+<div class="px-4 py-6 bg-[#111] mt-6 border-y border-[#1a1a1a]">
+  <h3 class="font-bold mb-3"><i class="fas fa-info-circle mr-2 text-[#e50914]"></i>How This Web Clone Works (Hybrid Mode)</h3>
+  <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-400">
+    <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#222]">
+      <b class="text-white">✅ Manual Mode (You control)</b><br>
+      Click "Add Live" -> paste any HLS (.m3u8) link -> it shows LIVE instantly like Cricfy. Stream local Ethiopian league via OBS -> Mux/Cloudflare -> paste link here. Legal and stable.
+    </div>
+    <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#222]">
+      <b class="text-white">⚡ Auto Mode (Like Cricfy)</b><br>
+      Add provider with catLink = your M3U URL. System auto-fetches and parses M3U (with optional decryption). Same logic as Kodi plugin's get_channels() but generic. No Cricfy private keys needed.
+    </div>
+  </div>
+  <div class="mt-4 text-xs bg-yellow-900/30 border border-yellow-800/50 p-3 rounded-lg text-yellow-200">
+    <b>Fixed:</b> Use preview URL for <b>Port 8000 (Cricfy Web - Hybrid Live)</b> - it serves both frontend + API. Port 3000 alone will fail because it has no API.
+  </div>
+</div>
+
+<div id="playerModal" class="fixed inset-0 bg-black/90 z-[100] hidden flex-col">
+  <div class="flex items-center justify-between p-4 border-b border-[#222] bg-black">
+    <h3 id="playerTitle" class="font-bold truncate">Match Title</h3>
+    <div class="flex gap-2">
+      <select id="providerSelect" class="bg-[#1a1a1a] border border-[#333] rounded-lg px-3 py-2 text-sm"></select>
+      <button onclick="closePlayer()" class="bg-[#222] w-9 h-9 rounded-full"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+  <div class="flex-1 flex flex-col lg:flex-row">
+    <div class="flex-1 bg-black relative">
+      <video id="videoPlayer" controls class="w-full h-full max-h-[70vh] lg:max-h-full bg-black"></video>
+      <div id="playerStatus" class="absolute bottom-4 left-4 bg-black/70 px-3 py-1 rounded-full text-xs"></div>
+    </div>
+    <div class="w-full lg:w-80 bg-[#111] border-l border-[#222] p-4">
+      <h4 class="font-bold mb-3">Providers (Like Cricfy)</h4>
+      <div id="playerProviders" class="space-y-2"></div>
+      <div class="mt-6 p-3 bg-[#1a1a1a] rounded-lg text-xs text-gray-400">
+        <b class="text-white">Hybrid System:</b><br>
+        hls.js player. If Server 1 fails, click Server 2. Backend proxy handles CORS like Cricfy's lib/req.py
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="adminModal" class="fixed inset-0 bg-black/80 z-[100] hidden items-center justify-center p-4">
+  <div class="bg-[#1a1a1a] w-full max-w-2xl rounded-2xl border border-[#333] p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-black">Add Live Match - Manual Mode</h3>
+      <button onclick="closeAdmin()" class="bg-[#222] w-8 h-8 rounded-full"><i class="fas fa-times text-sm"></i></button>
+    </div>
+    <div class="space-y-4">
+      <input id="a_title" placeholder="Match Title: e.g. Ethiopia vs Kenya LIVE" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 text-sm">
+      <div class="grid grid-cols-2 gap-3">
+        <input id="a_teamA" placeholder="Team A: Ethiopia" class="bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 text-sm">
+        <input id="a_teamB" placeholder="Team B: Kenya" class="bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 text-sm">
+      </div>
+      <select id="a_category" class="w-full bg-[#0a0a0a] border border-[#333] rounded-xl px-4 py-3 text-sm">
+        <option value="football">Football</option>
+        <option value="cricket">Cricket</option>
+        <option value="entertainment">Entertainment</option>
+      </select>
+      <div class="bg-[#0a0a0a] border border-[#333] rounded-xl p-4">
+        <label class="text-xs font-bold text-gray-400 uppercase">Stream URL (HLS .m3u8) - This is your LIVE link</label>
+        <input id="a_url" placeholder="https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8" class="w-full bg-[#1a1a1a] border border-[#222] rounded-lg px-4 py-3 text-sm mt-2">
+        <p class="text-[11px] text-gray-500 mt-2">For real: OBS -> Mux/Cloudflare -> paste HLS here. For demo use test link above.</p>
+      </div>
+      <button onclick="addMatch()" class="w-full bg-[#e50914] py-3 rounded-xl font-black hover:bg-red-700">ADD LIVE MATCH</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
+<script>
+const API = '/api';
+let allMatches = [];
+let allProviders = [];
+let hls = null;
+
+async function loadData() {
+  const statusEl = document.getElementById('loadingStatus');
+  try {
+    statusEl.innerText = 'Fetching matches from /api/matches...';
+    const matchesRes = await fetch(`${API}/matches`);
+    if(!matchesRes.ok) throw new Error(`Matches API failed: ${matchesRes.status} - Are you on port 8000?`);
+    const matches = await matchesRes.json();
+    
+    statusEl.innerText = 'Fetching providers...';
+    const providersRes = await fetch(`${API}/providers`);
+    if(!providersRes.ok) throw new Error(`Providers API failed: ${providersRes.status}`);
+    const providers = await providersRes.json();
+    
+    allMatches = matches;
+    allProviders = providers;
+    renderMatches(matches);
+    renderProviders(providers);
+    document.getElementById('liveCount').innerText = `${matches.filter(m=>m.status==='LIVE').length} live`;
+    statusEl.innerText = `✅ Loaded ${matches.length} matches, ${providers.length} providers - System Ready (Hybrid Mode)`;
+    statusEl.className = 'px-4 py-2 text-xs bg-green-900/20 border-b border-green-800/30 text-green-400';
+    setTimeout(()=>{ statusEl.style.display='none'; }, 4000);
+  } catch(e) {
+    console.error(e);
+    statusEl.innerText = `❌ Error: ${e.message} - Use Port 8000 preview (Cricfy Web - Hybrid Live), not 3000`;
+    statusEl.className = 'px-4 py-2 text-xs bg-red-900/30 border-b border-red-800/50 text-red-300';
+    document.getElementById('matchesGrid').innerHTML = `<div class="col-span-3 bg-[#1a1a1a] border border-red-900/50 p-6 rounded-xl text-center"><b class="text-red-400">Failed to load</b><br><span class="text-xs text-gray-400">${e.message}</span><br><button onclick="loadData()" class="mt-3 bg-white text-black px-4 py-2 rounded-full text-sm font-bold">Retry</button><div class="mt-3 text-[11px] text-gray-500">Tip: In Arena, you see 2 previews. Click the one for <b>8000 - Cricfy Web - Hybrid Live</b>. Port 3000 has no API.</div></div>`;
+  }
+}
+
+function renderMatches(matches) {
+  const grid = document.getElementById('matchesGrid');
+  if(matches.length===0){ grid.innerHTML='<div class="col-span-3 text-center py-10 text-gray-500">No matches in this category</div>'; return; }
+  grid.innerHTML = matches.map(m => `
+    <div onclick="openPlayer('${m.id}')" class="group bg-[#1a1a1a] rounded-2xl overflow-hidden border border-[#222] cursor-pointer card-hover transition-all">
+      <div class="relative">
+        <img src="${m.thumbnail}" class="w-full h-44 object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+        <div class="absolute top-3 left-3 flex gap-2">
+          <span class="bg-[#e50914] text-[10px] font-black px-2 py-1 rounded-full flex items-center gap-1"><div class="w-1.5 h-1.5 bg-white rounded-full live-dot"></div>${m.status}</span>
+          <span class="bg-black/70 backdrop-blur text-[10px] px-2 py-1 rounded-full">${m.league}</span>
+        </div>
+        <div class="absolute top-3 right-3 bg-black/70 backdrop-blur w-8 h-8 rounded-full flex items-center justify-center group-hover:bg-[#e50914] transition"><i class="fas fa-play text-xs ml-0.5"></i></div>
+        <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <img src="${m.teamA.logo}" class="w-8 h-8 rounded-full bg-white p-1 object-contain"><span class="font-bold text-sm">${m.teamA.name}</span>
+          </div>
+          <span class="text-xs bg-white/20 backdrop-blur px-2 py-1 rounded-full">VS</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-sm">${m.teamB.name}</span><img src="${m.teamB.logo}" class="w-8 h-8 rounded-full bg-white p-1 object-contain">
+          </div>
+        </div>
+      </div>
+      <div class="p-3 flex items-center justify-between">
+        <div><div class="font-bold text-sm truncate">${m.title}</div><div class="text-[11px] text-gray-400">${m.time} • ${m.providers.length} servers</div></div>
+        <i class="fas fa-chevron-right text-gray-600 text-xs"></i>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderProviders(providers) {
+  const grid = document.getElementById('providersGrid');
+  grid.innerHTML = providers.map(p => `
+    <div onclick="openProvider('${p.id}')" class="bg-[#1a1a1a] border border-[#222] rounded-xl p-4 hover:border-[#333] cursor-pointer group">
+      <img src="${p.image}" class="w-12 h-12 mx-auto mb-3 object-contain bg-white rounded-full p-2 group-hover:scale-110 transition">
+      <div class="text-center font-bold text-sm truncate">${p.title}</div>
+      <div class="text-center text-[10px] text-gray-500 mt-1">${p.type}</div>
+    </div>
+  `).join('');
+}
+
+let currentMatch = null;
+function openPlayer(matchId) {
+  const match = allMatches.find(m=>m.id===matchId);
+  if(!match) return;
+  currentMatch = match;
+  document.getElementById('playerModal').classList.remove('hidden');
+  document.getElementById('playerModal').classList.add('flex');
+  document.getElementById('playerTitle').innerText = match.title;
+  const select = document.getElementById('providerSelect');
+  select.innerHTML = match.providers.map((p,i)=>`<option value="${i}">${p.name}</option>`).join('');
+  const list = document.getElementById('playerProviders');
+  list.innerHTML = match.providers.map((p,i)=>`
+    <button onclick="playProvider(${i})" class="w-full text-left bg-[#1a1a1a] hover:bg-[#222] border border-[#222] rounded-xl p-3 text-sm flex items-center justify-between">
+      <span><i class="fas fa-server mr-2 text-gray-500"></i>${p.name}</span><span class="text-[10px] bg-green-900/50 text-green-400 px-2 py-1 rounded-full">LIVE</span>
+    </button>
+  `).join('');
+  playProvider(0);
+}
+
+function playProvider(index) {
+  if(!currentMatch) return;
+  const prov = currentMatch.providers[index];
+  const video = document.getElementById('videoPlayer');
+  const status = document.getElementById('playerStatus');
+  status.innerText = `Loading ${prov.name}...`;
+  let url = prov.url;
+  if(hls) { hls.destroy(); hls=null; }
+  if(Hls.isSupported() && url.includes('.m3u8')) {
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, ()=>{ video.play(); status.innerText = `Playing ${prov.name} - LIVE`; });
+    hls.on(Hls.Events.ERROR, (e,data)=>{ status.innerText = `Error: ${data.type} - Try another server`; });
+  } else {
+    video.src = url;
+    video.play();
+    status.innerText = `Playing ${prov.name}`;
+  }
+  document.getElementById('providerSelect').value = index;
+}
+
+function closePlayer() {
+  document.getElementById('playerModal').classList.add('hidden');
+  document.getElementById('playerModal').classList.remove('flex');
+  document.getElementById('videoPlayer').pause();
+  if(hls){ hls.destroy(); hls=null; }
+}
+
+function openProvider(id) {
+  const prov = allProviders.find(p=>p.id===id);
+  if(!prov) return;
+  if(prov.type === 'manual') filterCategory(prov.id);
+  else { window.open(`/api/channels?provider_url=${encodeURIComponent(prov.catLink)}`, '_blank'); }
+}
+
+function filterCategory(cat) {
+  document.querySelectorAll('.cat-btn').forEach(b=>{ b.classList.remove('active','bg-white','text-black'); b.classList.add('bg-[#1a1a1a]'); });
+  document.querySelector(`[data-cat="${cat}"]`)?.classList.add('active','bg-white','text-black');
+  const filtered = cat==='all' ? allMatches : allMatches.filter(m=>m.category===cat);
+  renderMatches(filtered);
+}
+
+document.querySelectorAll('.cat-btn').forEach(btn=>{ btn.addEventListener('click', ()=>filterCategory(btn.dataset.cat)); });
+document.getElementById('providerSelect').addEventListener('change', (e)=>playProvider(parseInt(e.target.value)));
+function openAdmin(){ document.getElementById('adminModal').classList.remove('hidden'); document.getElementById('adminModal').classList.add('flex'); }
+function closeAdmin(){ document.getElementById('adminModal').classList.add('hidden'); document.getElementById('adminModal').classList.remove('flex'); }
+
+async function addMatch() {
+  const data = {
+    title: document.getElementById('a_title').value,
+    teamA: { name: document.getElementById('a_teamA').value || 'Team A', logo: 'https://flagcdn.com/w80/et.png' },
+    teamB: { name: document.getElementById('a_teamB').value || 'Team B', logo: 'https://flagcdn.com/w80/ke.png' },
+    thumbnail: 'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600',
+    category: document.getElementById('a_category').value,
+    league: 'Live', status: 'LIVE', time: 'LIVE NOW',
+    providers: [{ name: 'Server 1 - HD', url: document.getElementById('a_url').value, type: 'hls', headers: {} }]
+  };
+  if(!data.title || !data.providers[0].url){ alert('Title and Stream URL required'); return; }
+  const res = await fetch('/api/matches', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+  const json = await res.json();
+  if(json.success){ closeAdmin(); loadData(); alert('Live match added!'); }
+}
+
+document.getElementById('searchInput')?.addEventListener('input', (e)=>{
+  const q = e.target.value.toLowerCase();
+  const filtered = allMatches.filter(m=>m.title.toLowerCase().includes(q) || m.teamA.name.toLowerCase().includes(q) || m.teamB.name.toLowerCase().includes(q));
+  renderMatches(filtered);
+});
+
+loadData();
+</script>
+</body>
+</html>
